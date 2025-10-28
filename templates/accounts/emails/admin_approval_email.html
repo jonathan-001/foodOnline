@@ -1,0 +1,11 @@
+{% autoescape off %}
+Hii, {{ user.first_name }} ,
+Please click on the link below to verify your account:
+
+{% if is_approved %}
+Congratulations! Your restaurant has been approved by our admin team. --foodOnline
+{% else %}
+We are sorry! Your restaurant is not eligible for publishing your food menu on our marketplace. For more details contact support@foodonline.com --foodOnline
+{% endif %}
+
+{% endautoescape %}
