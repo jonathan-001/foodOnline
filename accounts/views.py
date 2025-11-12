@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from vendor.forms import VendorForm
+from vendor.forms import VendorForm # This import is correct
 from .forms import UserForm
 from .models import User, UserProfile
 from django.contrib import messages,auth
@@ -31,7 +31,7 @@ def check_role_customer(user):
         raise PermissionDenied
 
 def registerUser(request):
-    if user.is_authenticated:
+    if request.user.is_authenticated:
         messages.warning(request,'You are already logged in.')
         return redirect('myAccount')
     elif request.method == 'POST':
@@ -76,7 +76,7 @@ def registerUser(request):
 
 
 def registerVendor(request):
-    if user.is_authenticated:
+    if request.user.is_authenticated:
         messages.warning(request,'You are already logged in.')
         return redirect('myAccount')
     elif request.method == 'POST':
@@ -97,6 +97,7 @@ def registerVendor(request):
             vendor.user_profile = user_profile
             vendor.save()
             
+            # Send verification email
             mail_subject = 'Activate your vendor account'
             email_template = 'accounts/emails/account_verification_email.html'
 
@@ -105,7 +106,7 @@ def registerVendor(request):
             messages.success(request, 'Your vendor account has been registered successfully! Please wait for the approval.')
             return redirect('registerVendor')
         else:
-            print('invalid form', form.errors)
+            print('invalid form', form.errors, v_form.errors)
     else:
         form  = UserForm()
         v_form = VendorForm()
@@ -113,7 +114,7 @@ def registerVendor(request):
         'form': form,
         'v_form': v_form
     }
-    return render(request, 'accounts/registerVendor.html')
+    return render(request, 'accounts/registerVendor.html',context)
 
 
 def activate(request, uidb64, token):
@@ -136,7 +137,7 @@ def activate(request, uidb64, token):
 
 
 def login(request):
-    if user.is_authenticated:
+    if request.user.is_authenticated:
         messages.warning(request,'You are already logged in.')
         return redirect('myAccount')
     elif request.method == 'POST':
